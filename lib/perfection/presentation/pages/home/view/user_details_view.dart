@@ -39,7 +39,6 @@ class UserDetailsScreen extends StatelessWidget {
                     color: ColorManager.primary,
                     size: 50.0,
                   ));
-                  ;
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
@@ -64,7 +63,8 @@ class UserDetailsScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(26),
                                 color: ColorManager.offWhite),
-                            child: Text("First Name: ${user.firstName}",style: AppTextStyles.mediumTitle14)),
+                            child: Text("First Name: ${user.firstName}",
+                                style: AppTextStyles.mediumTitle14)),
                         const SizedBox(height: 16),
                         Container(
                             padding: const EdgeInsets.symmetric(
@@ -72,7 +72,8 @@ class UserDetailsScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(26),
                                 color: ColorManager.offWhite),
-                            child: Text("Last Name: ${user.lastName}",style: AppTextStyles.mediumTitle14)),
+                            child: Text("Last Name: ${user.lastName}",
+                                style: AppTextStyles.mediumTitle14)),
                         const SizedBox(height: 16),
                         Container(
                             padding: const EdgeInsets.symmetric(
@@ -80,7 +81,8 @@ class UserDetailsScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(26),
                                 color: ColorManager.offWhite),
-                            child: Text("Email: ${user.email}",style: AppTextStyles.mediumTitle14)),
+                            child: Text("Email: ${user.email}",
+                                style: AppTextStyles.mediumTitle14)),
                       ],
                     ),
                   );

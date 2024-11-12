@@ -20,6 +20,7 @@ class UserListScreenState extends State<UserListScreen> {
   final List<User> _users = [];
   int page = 1;
   bool isLoading = false;
+  bool hasData = true;
 
   @override
   void initState() {
@@ -38,9 +39,14 @@ class UserListScreenState extends State<UserListScreen> {
       setState(() {
         _users.clear(); // Clear the list to show only the current page's users
         _users.addAll(users);
+        hasData = _users
+            .isNotEmpty; // Update hasData based on whether users are available
       });
     } catch (e) {
       print("Failed to fetch users: $e");
+      setState(() {
+        hasData = false;
+      });
     } finally {
       setState(() {
         isLoading = false;
@@ -68,7 +74,7 @@ class UserListScreenState extends State<UserListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text('userList'.tr(), style: AppTextStyles.largeTitle20),
+        title: Text('userList'.tr(), style: AppTextStyles.largeTitle20),
         actions: [
           IconButton(
             onPressed: () {
@@ -76,9 +82,9 @@ class UserListScreenState extends State<UserListScreen> {
                 context: context,
                 position: context.locale == const Locale('en')
                     ? RelativeRect.fromSize(
-                    const Rect.fromLTRB(300, 80, 10, 5), Size.infinite)
+                        const Rect.fromLTRB(300, 80, 10, 5), Size.infinite)
                     : RelativeRect.fromSize(
-                    const Rect.fromLTRB(10, 80, 100, 5), Size.infinite),
+                        const Rect.fromLTRB(10, 80, 100, 5), Size.infinite),
                 color: ColorManager.grey1,
                 items: [
                   const PopupMenuItem(
@@ -115,45 +121,51 @@ class UserListScreenState extends State<UserListScreen> {
             ),
             const SizedBox(height: 18),
             Expanded(
-              child: ListView.separated(
-                itemCount: _users.length + (isLoading ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == _users.length) {
-                    return Center(
+              child: isLoading
+                  ? Center(
                       child: SpinKitRotatingCircle(
                         color: ColorManager.primary,
                         size: 50.0,
                       ),
-                    );
-                  }
-                  final user = _users[index];
-                  return Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(26),
-                        color: ColorManager.grey),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(user.avatar),
-                      ),
-                      title: Text(
-                        '${user.firstName} ${user.lastName}',
-                        style: AppTextStyles.mediumTitle14,
-                      ),
-                      trailing: Icon(Icons.arrow_forward_ios,
-                          color: ColorManager.primary),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              UserDetailsScreen(userId: user.id),
+                    )
+                  : hasData
+                      ? ListView.separated(
+                          itemCount: _users.length,
+                          itemBuilder: (context, index) {
+                            final user = _users[index];
+                            return Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(26),
+                                  color: ColorManager.grey),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(user.avatar),
+                                ),
+                                title: Text(
+                                  '${user.firstName} ${user.lastName}',
+                                  style: AppTextStyles.mediumTitle14,
+                                ),
+                                trailing: Icon(Icons.arrow_forward_ios,
+                                    color: ColorManager.primary),
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        UserDetailsScreen(userId: user.id),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) => const Divider(),
+                        )
+                      : Center(
+                          child: Text(
+                            'noUsers'.tr(),
+                            style: AppTextStyles.mediumTitle14,
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) => const Divider(),
-              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -186,4 +198,3 @@ class UserListScreenState extends State<UserListScreen> {
     );
   }
 }
-
